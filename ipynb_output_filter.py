@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+
+"""
+To make the filter work in newly downloaded repository run the following command in this directory
+git config --add include.path ../.gitconfig
+
+source: http://pascalbugnion.net/blog/ipython-notebooks-and-git.html
+"""
+
+
 import sys
 
 try:
