@@ -36,6 +36,6 @@ config.rst
 
 /.project
 /.pydevproject
-data/
+out/
 *.db
 *.log
