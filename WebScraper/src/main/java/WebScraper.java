@@ -20,19 +20,20 @@ public class WebScraper {
 	private CookieLoader cookieLoader;
 	private PropertyFileConfiguration defaultConf;
 	private TimeRandomizer timeRandomizer = new TimeRandomizer(3000, 6000);
-	
+
+	private boolean downloadAttachedContents;
+	private boolean downloadTranscript;
+	private boolean downloadVideos;
 	private boolean makeDashboardScreenshots;
 	private boolean makeCoursesScreenshot;
 	private boolean makeCourseScreenshots;
 	private boolean makeTopicScreenshots;
-	private boolean downloadVideos;
-	private boolean downloadAttachedContents;
-	private boolean downloadTranscript;
 	private boolean makeQuizScreenshots;
 	private boolean saveDashboardHtml;
-	private boolean saveQuizHtml;
+	private boolean saveCoursesHtml;
 	private boolean saveCourseHtml;
 	private boolean saveTopicHtml;
+	private boolean saveQuizHtml;
 
 	private final String MSG_STATUS_NEW_DIRECTORY      = "Directory created: '%s'";
 	private final String MSG_STATUS_HTML_CREATED       = "HTML file created: '%s'";
@@ -55,7 +56,8 @@ public class WebScraper {
 	private final String MSG_ERROR_NO_SUB              = "No Transcript URL.";
 	private final String MSG_ERROR_NO_COOKIE           = "There is no cookie in the file:\n'%s'";
 	private final String MSG_ERROR_COOKIE_LOGIN        = "Cookies were not present in files.";
-	private final String MSG_ERROR_UNKNOWN_PAGE_TYPE   = "Unknown type of page. '%s'";
+	private final String MSG_ERROR_UNKNOWN_PAGE_TYPE   = "Unknown type of page: '%s'";
+	private final String MSG_ERROR_WRONG_VIDEO_PAGE    = "Wrong video type page: '%s'";
 	private final String OUTPUT_SEP_1                  = " /// ";
 	private final String OUTPUT_SEP_2                  = " ::: ";
 	
@@ -71,18 +73,19 @@ public class WebScraper {
 			defaultConf 				= new PropertyFileConfiguration(Constants.CONFIGURATION_FILE_PATH);
 			cookieLoader 				= new CookieLoader();	
 
+			downloadAttachedContents	= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_ATTACHED_CONTENTS);
+			downloadTranscript 			= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_TRANSCRIPT);
+			downloadVideos 				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_VIDEO);
 			makeDashboardScreenshots 	= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DASHBOARD_SCREENSHOT);
 			makeCoursesScreenshot		= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSES_SCREENSHOT);
 			makeCourseScreenshots 		= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSE_SCREENSHOT);
 			makeTopicScreenshots 		= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_TOPIC_SCREENSHOT);
 			makeQuizScreenshots 		= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_QUIZ_SCREENSHOT);
-			downloadVideos 				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_VIDEO);
-			downloadAttachedContents	= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_ATTACHED_CONTENTS);
-			downloadTranscript 			= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_TRANSCRIPT);
 			saveDashboardHtml			= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DASHBOARD_HTML);
-			saveQuizHtml				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_QUIZ_HTML);
+			saveCoursesHtml				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSES_HTML);
 			saveCourseHtml				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSE_HTML);
 			saveTopicHtml				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_TOPIC_HTML);
+			saveQuizHtml				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_QUIZ_HTML);
 			
 			String username 			= defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_USERNAME);
 			String password 			= defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_PASSWORD);
@@ -152,10 +155,18 @@ public class WebScraper {
 				ContentSaver.saveFullScreenScreenshot(driver, Constants.DEFAULT_OUTPUT_DIR_PATH, Constants.OUTPUT_FILE_NAME_DASHBOARD_SCREEN);
 			}
 			
+			if (saveDashboardHtml) {
+
+			}
+			
 			if (makeCoursesScreenshot) {
-				simpleWait(3000);
 				driver.navigate().to(defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_COURSES_URL));
+				simpleWait(3000);
 				ContentSaver.saveFullScreenScreenshot(driver, Constants.DEFAULT_OUTPUT_DIR_PATH, Constants.OUTPUT_FILE_NAME_COURSES_SCREEN);
+			}
+			
+			if (saveCoursesHtml) {
+
 			}
 
 			simpleWait(5500);
@@ -174,7 +185,7 @@ public class WebScraper {
 				File courseDirectory = ContentSaver.createDirectoryStructureFromBaseDir(cleanedCourseTitleText);
 				System.out.println(String.format(MSG_STATUS_NEW_DIRECTORY, courseDirectory.getAbsolutePath()));
 				
-				if (saveTopicHtml) {
+				if (saveCourseHtml) {
 					simpleWait(3000);
 					String htmlFileName = ContentSaver.getTimestampString() + Constants.FILE_NAME_PART_SEP + Utils.cleanString(url) + Constants.OUTPUT_FILE_EXTENSION_HTML;
 					ContentSaver.writeTextFile(driver.getPageSource(), htmlFileName, courseDirectory);
@@ -184,16 +195,15 @@ public class WebScraper {
 				simpleWait();
 				WebElement expandButton = driver.findElement(By.id(Constants.WEBSITE_CONTENT_EXPAND_BUTTON_ID));
 				expandButton.click();
-				
+
 				if (makeCourseScreenshots) {
 					simpleWait(3000);
 					ContentSaver.saveFullScreenScreenshot(driver, courseDirectory.getPath(), Constants.OUTPUT_FILE_NAME_COURSE_SCREEN);
-					
-					simpleWait(1000, 3000);
 				}
-
-				expandButton.click();
 				
+				simpleWait();
+				expandButton.click();
+
 				if (downloadAttachedContents) {
 					
 					System.out.println(MSG_STATUS_GET_ATTACHED);
@@ -214,7 +224,11 @@ public class WebScraper {
 					}
 				}
 				
-				if (downloadVideos || downloadTranscript || makeQuizScreenshots || saveQuizHtml) {
+				if ( makeTopicScreenshots || saveTopicHtml 
+					//  || makeArticleScreenshots || saveArticleHtml 
+						|| makeQuizScreenshots || saveQuizHtml 
+					//	|| makeVideoScreenshots || saveVideoHtml
+						|| downloadVideos || downloadTranscript) {
 
 					System.out.println(MSG_STATUS_PROCESS_ANCHOR);
 					
@@ -318,17 +332,17 @@ public class WebScraper {
 								System.out.println(MSG_ERROR_NO_SUB);
 							}
 						}
-						
-						if ( wasVideo && wasTranscript ) {
-							// Video type of page - already handled
 
-						} else if ( ( ! wasVideo ) && ( ! wasTranscript) ) {
-							// Other type of page
+						boolean wasArticle = false;
+						boolean wasQuiz = false;
 
-							throw new RuntimeException(String.format("NOT IMPLEMENTED YET: '%s'", url));
-
+						if ( (wasVideo && wasTranscript) || wasArticle || wasQuiz) {
+							// Already known page types
+						} else if ( ((! wasVideo) && wasTranscript) || (wasVideo && (! wasTranscript)) ) {
+							// Error - Wrong video page
+							throw new RuntimeException(String.format(MSG_ERROR_WRONG_VIDEO_PAGE, url));
 						} else {
-							// Error - every video page should have subtitles and vica versa
+							// Error - Other unknown type of page
 							throw new RuntimeException(String.format(MSG_ERROR_UNKNOWN_PAGE_TYPE, url));
 						}
 

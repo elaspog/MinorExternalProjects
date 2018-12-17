@@ -28,18 +28,19 @@ public class Constants {
     public static final String FILE_NAME_PART                             = ".timings";
     public static final String FILE_NAME_EXTENSION                        = ".txt";
 
-    public static final String CONFIG_SCRAPER_DASHBOARD_SCREENSHOT        = "scraper.makeDashboardScreenshots";
-    public static final String CONFIG_SCRAPER_QUIZ_SCREENSHOT             = "scraper.makeQuizScreenshots";
-    public static final String CONFIG_SCRAPER_TOPIC_SCREENSHOT            = "scraper.makeTopicScreenshots";
-    public static final String CONFIG_SCRAPER_COURSES_SCREENSHOT          = "scraper.makeCoursesScreenshots";
-    public static final String CONFIG_SCRAPER_COURSE_SCREENSHOT           = "scraper.makeCourseScreenshots";
-    public static final String CONFIG_SCRAPER_DOWNLOAD_VIDEO              = "scraper.downloadVideos";
     public static final String CONFIG_SCRAPER_DOWNLOAD_ATTACHED_CONTENTS  = "scraper.downloadAttachedContents";
     public static final String CONFIG_SCRAPER_DOWNLOAD_TRANSCRIPT         = "scraper.downloadTranscript";
+    public static final String CONFIG_SCRAPER_DOWNLOAD_VIDEO              = "scraper.downloadVideos";
+    public static final String CONFIG_SCRAPER_DASHBOARD_SCREENSHOT        = "scraper.makeDashboardScreenshots";
+    public static final String CONFIG_SCRAPER_COURSES_SCREENSHOT          = "scraper.makeCoursesScreenshots";
+    public static final String CONFIG_SCRAPER_COURSE_SCREENSHOT           = "scraper.makeCourseScreenshots";
+    public static final String CONFIG_SCRAPER_TOPIC_SCREENSHOT            = "scraper.makeTopicScreenshots";
+    public static final String CONFIG_SCRAPER_QUIZ_SCREENSHOT             = "scraper.makeQuizScreenshots";
     public static final String CONFIG_SCRAPER_DASHBOARD_HTML              = "scraper.saveDashboardHtml";
-    public static final String CONFIG_SCRAPER_QUIZ_HTML                   = "scraper.saveQuizHtml";
+    public static final String CONFIG_SCRAPER_COURSES_HTML                = "scraper.saveCoursesHtml";
     public static final String CONFIG_SCRAPER_COURSE_HTML                 = "scraper.saveCourseHtml";
     public static final String CONFIG_SCRAPER_TOPIC_HTML                  = "scraper.saveTopicHtml";
+    public static final String CONFIG_SCRAPER_QUIZ_HTML                   = "scraper.saveQuizHtml";
 
     public static final String CONFIGURATION_PROPERTY_USERNAME            = "username";
     public static final String CONFIGURATION_PROPERTY_PASSWORD            = "password";
