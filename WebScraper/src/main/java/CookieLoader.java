@@ -19,7 +19,7 @@ public class CookieLoader {
 	
 	private final String cookieFilePath;
 	private File cookiesFile;
-	private SimpleDateFormat dateParser = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy");
+	private SimpleDateFormat dateParser = new SimpleDateFormat(Constants.COOKIE_DATE_FORMAT);
 
 	public CookieLoader() {
 		this(Constants.COOKIES_FILE_PATH);
@@ -53,7 +53,7 @@ public class CookieLoader {
 			String strline;
 			while( (strline = bufferedReader.readLine()) != null ) {
 				
-		        StringTokenizer token = new StringTokenizer(strline,";");
+		        StringTokenizer token = new StringTokenizer(strline, Constants.COOKIE_SEPARATOR);
 		        
 		        while(token.hasMoreTokens()) {
 		        	
@@ -64,7 +64,7 @@ public class CookieLoader {
 			        Date expiry = null;
 			        String val;
 			        
-			        if(!(val=token.nextToken()).equals("null")) {
+			        if(!(val=token.nextToken()).equals(Constants.NULL_STRING)) {
 			        	try {
 							expiry = dateParser.parse(val);
 						} catch (ParseException e) { }
@@ -89,7 +89,9 @@ public class CookieLoader {
 		StringBuffer stringToReturn = new StringBuffer();
 		for(Cookie ck : cookies) {
 			
-			String entry = ck.getName()+";"+ck.getValue()+";"+ck.getDomain()+";"+ck.getPath()+";"+ck.getExpiry()+";"+ck.isSecure()+"\n";
+			String entry = ck.getName() + Constants.COOKIE_SEPARATOR + ck.getValue() + Constants.COOKIE_SEPARATOR
+					+ ck.getDomain() + Constants.COOKIE_SEPARATOR + ck.getPath() + Constants.COOKIE_SEPARATOR
+					+ ck.getExpiry() + Constants.COOKIE_SEPARATOR + ck.isSecure() + Constants.LINE_SEPARATOR;
 			stringToReturn.append(entry);
 		}
 		
@@ -111,15 +113,15 @@ public class CookieLoader {
 
     			StringBuffer entry = new StringBuffer()
     				.append(ck.getName())
-    				.append(";")
+    				.append(Constants.COOKIE_SEPARATOR)
     				.append(ck.getValue())
-    				.append(";")
+    				.append(Constants.COOKIE_SEPARATOR)
     				.append(ck.getDomain())
-    				.append(";")
+    				.append(Constants.COOKIE_SEPARATOR)
     				.append(ck.getPath())
-    				.append(";")
+    				.append(Constants.COOKIE_SEPARATOR)
     				.append(ck.getExpiry())
-    				.append(";")
+    				.append(Constants.COOKIE_SEPARATOR)
     				.append(ck.isSecure());
     			
 				bufferedWriter.write(entry.toString());
@@ -139,7 +141,6 @@ public class CookieLoader {
 
 		for (Cookie ck : getCookiesFromFile()) {
 
-	        //System.out.println(ck);
 			driver.manage().addCookie(ck);
 		}        
 		return driver;

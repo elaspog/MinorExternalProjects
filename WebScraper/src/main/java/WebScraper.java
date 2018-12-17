@@ -33,30 +33,31 @@ public class WebScraper {
 	private boolean saveQuizHtml;
 	private boolean saveCourseHtml;
 	private boolean saveTopicHtml;
-	
-	private final String MSG_ERROR_NO_MP4_A 		= "No MP4 URL found.";
-	private final String MSG_ERROR_NO_MP4_B 		= "Not an MP4 page.";
-	private final String MSG_ERROR_NO_SUB 			= "No Transcript URL.";
-	private final String MSG_ERROR_NO_COOKIE 		= "There is no cookie in the file:\n'%s'";
-	private final String MSG_STATUS_NEW_DIRECTORY	= "Directory created: '%s'";
-	private final String MSG_STATUS_HTML_CREATED	= "HTML file created: '%s'";
-	private final String MSG_ERROR_COOKIE_LOGIN		= "Cookies were not present in files.";
-	private final String MSG_STATUS_LOGIN_COOKIE_1	= "Logging in and generating new cookies for webdriver.";
-	private final String MSG_STATUS_LOGIN_COOKIE_2	= "New cookies for webdriver were saved.";
-	private final String MSG_STATUS_PROCESSING		= "\nProcessing...";
-	private final String MSG_STATUS_DOWNLOADING		= "Downloading: '%s' into '%s'";
-	private final String MSG_STATUS_ATTACHED_CNT	= "Attached content count: %s";
-	private final String MSG_STATUS_ANCHOR_CNT		= "Anchor count: '%s'";
-	private final String MSG_STATUS_GET_ATTACHED	= "Getting attached contents";
-	private final String MSG_STATUS_PROCESS_ANCHOR	= "Getting contents of main anchors";
-	private final String MSG_STATUS_NAVIGATE		= "Navigate back to: '%s'";
-	private final String MSG_STATUS_LOGIN_END		= "Login is done.";
-	private final String MSG_STATUS_LOGIN_START		= "Doing login: '%s'";
-	private final String MSG_STATUS_WAITING			= "Waiting: %s msec";
-	private final String MSG_STATUS_EXITED			= "Exited.";
-	private final String NAME_SEP 					= " - ";
-	private final String OUTPUT_SEP_1 				= " /// ";
-	private final String OUTPUT_SEP_2 				= " ::: ";
+
+	private final String MSG_STATUS_NEW_DIRECTORY      = "Directory created: '%s'";
+	private final String MSG_STATUS_HTML_CREATED       = "HTML file created: '%s'";
+	private final String MSG_STATUS_LOGIN_COOKIE_BEGIN = "Logging in and generating new cookies for webdriver.";
+	private final String MSG_STATUS_LOGIN_COOKIE_END   = "New cookies for webdriver were saved.";
+	private final String MSG_STATUS_PROCESSING         = "\nProcessing...";
+	private final String MSG_STATUS_DOWNLOADING        = "Downloading: '%s' into '%s'";
+	private final String MSG_STATUS_ATTACHED_CNT       = "Attached content count: %s";
+	private final String MSG_STATUS_ANCHOR_CNT         = "Anchor count: '%s'";
+	private final String MSG_STATUS_GET_ATTACHED       = "Getting attached contents";
+	private final String MSG_STATUS_PROCESS_ANCHOR     = "Getting contents of main anchors";
+	private final String MSG_STATUS_NAVIGATE           = "Navigate back to: '%s'";
+	private final String MSG_STATUS_LOGIN_END          = "Login is done.";
+	private final String MSG_STATUS_LOGIN_START        = "Doing login: '%s'";
+	private final String MSG_STATUS_WAITING            = "Waiting: %s msec";
+	private final String MSG_STATUS_EXITED             = "Exited.";
+	private final String MSG_STATUS_CURRENT_URL        = "[ %s / %s ] Current url: '%s'";
+	private final String MSG_ERROR_NO_MP4_A            = "No MP4 URL found.";
+	private final String MSG_ERROR_NO_MP4_B            = "Not an MP4 page.";
+	private final String MSG_ERROR_NO_SUB              = "No Transcript URL.";
+	private final String MSG_ERROR_NO_COOKIE           = "There is no cookie in the file:\n'%s'";
+	private final String MSG_ERROR_COOKIE_LOGIN        = "Cookies were not present in files.";
+	private final String MSG_ERROR_UNKNOWN_PAGE_TYPE   = "Unknown type of page. '%s'";
+	private final String OUTPUT_SEP_1                  = " /// ";
+	private final String OUTPUT_SEP_2                  = " ::: ";
 	
 	
 	public static void main(String[] args) {
@@ -134,13 +135,13 @@ public class WebScraper {
 
 			if (doLogin) {
 				
-				System.out.println(MSG_STATUS_LOGIN_COOKIE_1);
+				System.out.println(MSG_STATUS_LOGIN_COOKIE_BEGIN);
 				doLogin();
 				cookieLoader.writeCookiesIntoFile(driver);
-				System.out.println(MSG_STATUS_LOGIN_COOKIE_2);
+				System.out.println(MSG_STATUS_LOGIN_COOKIE_END);
 			}
 
-			// Note: this method here is called due to a bug in external lib
+			// Note: this method here is called due to a bug in external lib: AShot
 			ContentSaver.saveScreenshot(driver, Constants.DEFAULT_OUTPUT_DIR_PATH, Constants.OUTPUT_FILE_NAME_LOGIN_SCREEN);
 
 			/// Processing
@@ -175,7 +176,7 @@ public class WebScraper {
 				
 				if (saveTopicHtml) {
 					simpleWait(3000);
-					String htmlFileName = ContentSaver.getTimestampString() + "_" + Utils.cleanString(url) + Constants.OUTPUT_FILE_EXTENSION_HTML;
+					String htmlFileName = ContentSaver.getTimestampString() + Constants.FILE_NAME_PART_SEP + Utils.cleanString(url) + Constants.OUTPUT_FILE_EXTENSION_HTML;
 					ContentSaver.writeTextFile(driver.getPageSource(), htmlFileName, courseDirectory);
 					System.out.println(String.format(MSG_STATUS_HTML_CREATED, htmlFileName));
 				}
@@ -202,7 +203,7 @@ public class WebScraper {
 					System.out.println(String.format(MSG_STATUS_ATTACHED_CNT, sideContents.size()));
 					for (WebElement we : sideContents) {
 						
-						String sideElementUrl = we.getAttribute("href");
+						String sideElementUrl = we.getAttribute(Constants.WEBSITE_HREF);
 						String fileName = FilenameUtils.getName(new URL(sideElementUrl).getPath());
 						File newFile = new File(courseDirectory, fileName);
 						String filePath = newFile.getPath();
@@ -256,14 +257,25 @@ public class WebScraper {
 						String pageSource = driver.getPageSource();
 						
 						if (saveTopicHtml) {
-							ContentSaver.writeTextFile(pageSource, prefix + NAME_SEP + nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_HTML, courseDirectory);
+							ContentSaver.writeTextFile(pageSource, prefix + Constants.FILE_NAME_SEP + nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_HTML, courseDirectory);
+						}
+
+						if (makeTopicScreenshots) {
+
+							simpleWait(3000);
+							String pngFileName = nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_PNG;
+							File pngFile = ContentSaver.saveFullScreenScreenshot(driver, targetDir.getPath(), pngFileName);
+							Path linkPath = new File(courseDirectory, prefix + Constants.FILE_NAME_SEP + pngFileName).toPath();
+							ContentSaver.createSymbolicLink(linkPath, pngFile.toPath());
 						}
 						
+						boolean wasVideo = false;
 						if (downloadVideos) {							
 
 							try {
-								System.out.println("CURRENT_URL: " + driver.getCurrentUrl());
+								System.out.println(String.format(MSG_STATUS_CURRENT_URL, prefix, String.format(Constants.NUMBER_FORMAT, anchorsCount), driver.getCurrentUrl()));
 								WebElement videoField = driver.findElement(By.cssSelector(Constants.WEBSITE_CONTENT_VIDEO_URL_CLASS));
+								wasVideo = true;	// or NoSuchElementException happens
 								
 								String videoDiv = videoField.getAttribute(Constants.WEBSITE_ATTRIBUTE_INNER_HTML);
 								//ContentSaver.writeTextFile(videoDiv, prefix + NAME_SEP + nameLevel3 + ".txt", courseDirectory);
@@ -274,7 +286,7 @@ public class WebScraper {
 									simpleWait(1000, 3000);
 									String mp4FileName = nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_MP4;								
 									File mp4File = ContentSaver.downloadFileWithWaiting(mp4Url, new File(targetDir, mp4FileName).getPath());
-									Path linkPath = new File(courseDirectory, prefix + NAME_SEP + mp4FileName).toPath();
+									Path linkPath = new File(courseDirectory, prefix + Constants.FILE_NAME_SEP + mp4FileName).toPath();
 									ContentSaver.createSymbolicLink(linkPath, mp4File.toPath());
 									
 								} else {
@@ -284,35 +296,42 @@ public class WebScraper {
 								System.out.println(MSG_ERROR_NO_MP4_B);
 							}
 						}
-						
+
+						boolean wasTranscript = false;
 						if (downloadTranscript) {
 
 							try {
 								
 								WebElement transcriptDiv = driver.findElement(By.cssSelector(Constants.WEBSITE_CONTENT_TRANSCRIPT_CLASS));
+								wasTranscript = true;	// or NoSuchElementException happens
+
 								List<WebElement> listOfSpanElements1 = transcriptDiv.findElements(By.xpath(Constants.WEBSITE_CONTENT_TRANSCRIPT_1_XPATH));
 								List<WebElement> listOfSpanElements2 = transcriptDiv.findElements(By.xpath(Constants.WEBSITE_CONTENT_TRANSCRIPT_2_XPATH));
 								
 								String transcriptString1 = listOfSpanElements1.stream().map(s -> s.getAttribute(Constants.WEBSITE_INNER_HTML)).collect(Collectors.joining(Constants.LINE_ENDING)) + Constants.LINE_ENDING;
 								String transcriptString2 = listOfSpanElements2.stream().map(s -> s.getText()).collect(Collectors.joining(Constants.LINE_ENDING)) + Constants.LINE_ENDING;
 								
-								ContentSaver.writeTextFile(transcriptString1, prefix + NAME_SEP + nameLevel3 + ".timings.txt", courseDirectory);
-								ContentSaver.writeTextFile(transcriptString2, prefix + NAME_SEP + nameLevel3 + ".txt", courseDirectory);
+								ContentSaver.writeTextFile(transcriptString1, prefix + Constants.FILE_NAME_SEP + nameLevel3 + Constants.FILE_NAME_PART + Constants.FILE_NAME_EXTENSION, courseDirectory);
+								ContentSaver.writeTextFile(transcriptString2, prefix + Constants.FILE_NAME_SEP + nameLevel3 + Constants.FILE_NAME_EXTENSION, courseDirectory);
 								
 							} catch (NoSuchElementException e) {
 								System.out.println(MSG_ERROR_NO_SUB);
 							}
 						}
 						
-						if (makeTopicScreenshots) {
+						if ( wasVideo && wasTranscript ) {
+							// Video type of page - already handled
 
-							simpleWait(3000);							
-							String pngFileName = nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_PNG;
-							File pngFile = ContentSaver.saveFullScreenScreenshot(driver, targetDir.getPath(), pngFileName);
-							Path linkPath = new File(courseDirectory, prefix + NAME_SEP + pngFileName).toPath();
-							ContentSaver.createSymbolicLink(linkPath, pngFile.toPath());
+						} else if ( ( ! wasVideo ) && ( ! wasTranscript) ) {
+							// Other type of page
+
+							throw new RuntimeException(String.format("NOT IMPLEMENTED YET: '%s'", url));
+
+						} else {
+							// Error - every video page should have subtitles and vica versa
+							throw new RuntimeException(String.format(MSG_ERROR_UNKNOWN_PAGE_TYPE, url));
 						}
-						
+
 						simpleWait();
 						driver.navigate().back();
 					}
