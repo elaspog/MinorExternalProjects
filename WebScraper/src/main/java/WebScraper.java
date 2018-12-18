@@ -21,45 +21,22 @@ public class WebScraper {
 	private PropertyFileConfiguration defaultConf;
 	private TimeRandomizer timeRandomizer = new TimeRandomizer(3000, 6000);
 
-	private boolean downloadAttachedContents;
-	private boolean downloadTranscript;
-	private boolean downloadVideos;
-	private boolean makeDashboardScreenshots;
-	private boolean makeCoursesScreenshot;
-	private boolean makeCourseScreenshots;
-	private boolean makeTopicScreenshots;
-	private boolean makeQuizScreenshots;
+
 	private boolean saveDashboardHtml;
 	private boolean saveCoursesHtml;
-	private boolean saveCourseHtml;
-	private boolean saveTopicHtml;
-	private boolean saveQuizHtml;
 
-	private final String MSG_STATUS_NEW_DIRECTORY      = "Directory created: '%s'";
-	private final String MSG_STATUS_HTML_CREATED       = "HTML file created: '%s'";
-	private final String MSG_STATUS_LOGIN_COOKIE_BEGIN = "Logging in and generating new cookies for webdriver.";
-	private final String MSG_STATUS_LOGIN_COOKIE_END   = "New cookies for webdriver were saved.";
-	private final String MSG_STATUS_PROCESSING         = "\nProcessing...";
-	private final String MSG_STATUS_DOWNLOADING        = "Downloading: '%s' into '%s'";
-	private final String MSG_STATUS_ATTACHED_CNT       = "Attached content count: %s";
-	private final String MSG_STATUS_ANCHOR_CNT         = "Anchor count: '%s'";
-	private final String MSG_STATUS_GET_ATTACHED       = "Getting attached contents";
-	private final String MSG_STATUS_PROCESS_ANCHOR     = "Getting contents of main anchors";
-	private final String MSG_STATUS_NAVIGATE           = "Navigate back to: '%s'";
-	private final String MSG_STATUS_LOGIN_END          = "Login is done.";
-	private final String MSG_STATUS_LOGIN_START        = "Doing login: '%s'";
-	private final String MSG_STATUS_WAITING            = "Waiting: %s msec";
-	private final String MSG_STATUS_EXITED             = "Exited.";
-	private final String MSG_STATUS_CURRENT_URL        = "[ %s / %s ] Current url: '%s'";
-	private final String MSG_ERROR_NO_MP4_A            = "No MP4 URL found.";
-	private final String MSG_ERROR_NO_MP4_B            = "Not an MP4 page.";
-	private final String MSG_ERROR_NO_SUB              = "No Transcript URL.";
-	private final String MSG_ERROR_NO_COOKIE           = "There is no cookie in the file:\n'%s'";
-	private final String MSG_ERROR_COOKIE_LOGIN        = "Cookies were not present in files.";
-	private final String MSG_ERROR_UNKNOWN_PAGE_TYPE   = "Unknown type of page: '%s'";
-	private final String MSG_ERROR_WRONG_VIDEO_PAGE    = "Wrong video type page: '%s'";
-	private final String OUTPUT_SEP_1                  = " /// ";
-	private final String OUTPUT_SEP_2                  = " ::: ";
+	private boolean saveDashboardScreenshot;
+	private boolean saveCoursesScreenshot;
+
+	private boolean saveCourseHtml;
+	private boolean saveCourseScreenshots;
+	private boolean saveAttachedContents;
+
+	private boolean saveTopicHtml;
+	private boolean saveTopicScreenshots;
+	private boolean saveVideos;
+	private boolean saveTranscript;
+	private boolean saveQuizOrArticleHtml;
 	
 	
 	public static void main(String[] args) {
@@ -70,27 +47,31 @@ public class WebScraper {
 		
 		try {
 			
-			defaultConf 				= new PropertyFileConfiguration(Constants.CONFIGURATION_FILE_PATH);
-			cookieLoader 				= new CookieLoader();	
+			defaultConf             = new PropertyFileConfiguration(Constants.CONFIGURATION_FILE_PATH);
+			cookieLoader            = new CookieLoader();
 
-			downloadAttachedContents	= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_ATTACHED_CONTENTS);
-			downloadTranscript 			= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_TRANSCRIPT);
-			downloadVideos 				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_VIDEO);
-			makeDashboardScreenshots 	= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DASHBOARD_SCREENSHOT);
-			makeCoursesScreenshot		= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSES_SCREENSHOT);
-			makeCourseScreenshots 		= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSE_SCREENSHOT);
-			makeTopicScreenshots 		= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_TOPIC_SCREENSHOT);
-			makeQuizScreenshots 		= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_QUIZ_SCREENSHOT);
-			saveDashboardHtml			= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DASHBOARD_HTML);
-			saveCoursesHtml				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSES_HTML);
-			saveCourseHtml				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSE_HTML);
-			saveTopicHtml				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_TOPIC_HTML);
-			saveQuizHtml				= defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_QUIZ_HTML);
-			
-			String username 			= defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_USERNAME);
-			String password 			= defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_PASSWORD);
-			String urls 				= defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_URLS);
-			
+			String username         = defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_USERNAME);
+			String password         = defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_PASSWORD);
+			String urls             = defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_URLS);
+
+
+			saveDashboardHtml       = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DASHBOARD_HTML);
+			saveCoursesHtml         = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSES_HTML);
+
+			saveDashboardScreenshot = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DASHBOARD_SCREENSHOT);
+			saveCoursesScreenshot   = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSES_SCREENSHOT);
+
+			saveCourseHtml          = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSE_HTML);
+			saveCourseScreenshots   = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_COURSE_SCREENSHOT);
+			saveAttachedContents    = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_ATTACHED_CONTENTS);
+
+			saveTopicHtml           = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_TOPIC_HTML);
+			saveTopicScreenshots    = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_TOPIC_SCREENSHOT);
+			saveVideos              = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_VIDEO);
+			saveTranscript          = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_DOWNLOAD_TRANSCRIPT);
+			saveQuizOrArticleHtml   = defaultConf.getFlagValueByKey(Constants.CONFIG_SCRAPER_QUIZ_OR_ARTICLE_HTML);
+
+
 			System.out.println("username : " + username);
 			System.out.println("password : " + password);
 			System.out.println("urls     : " + urls);
@@ -98,20 +79,20 @@ public class WebScraper {
 			ContentSaver.createDirectoryStructureFromBaseDir();
 			
 			/// Configure driver and window
-			
+
 			System.setProperty(Constants.DRIVER_NAME, Constants.DRIVER_PATH);
 			driver = new FirefoxDriver();
 			driver.manage().window().maximize();
-			
+
 			/// Logging into the site
-			
+
 			boolean doLogin = false;
 			if (cookieLoader.cookiesAreSavedInFile()) {
 				
 				Set<Cookie> cookies = cookieLoader.getCookiesFromFile();
 				if (cookies == null || cookies.size() == 0) {
 					
-					System.out.println(String.format(MSG_ERROR_NO_COOKIE, cookieLoader.getCookiesString(cookies)));
+					System.out.println(String.format(Constants.MSG_ERROR_NO_COOKIE, cookieLoader.getCookiesString(cookies)));
 					doLogin = true;
 					
 				} else {
@@ -133,15 +114,15 @@ public class WebScraper {
 			} else {
 				
 				doLogin = true;
-				System.out.println(MSG_ERROR_COOKIE_LOGIN);
+				System.out.println(Constants.MSG_ERROR_COOKIE_LOGIN);
 			}
 
 			if (doLogin) {
 				
-				System.out.println(MSG_STATUS_LOGIN_COOKIE_BEGIN);
+				System.out.println(Constants.MSG_STATUS_LOGIN_COOKIE_BEGIN);
 				doLogin();
 				cookieLoader.writeCookiesIntoFile(driver);
-				System.out.println(MSG_STATUS_LOGIN_COOKIE_END);
+				System.out.println(Constants.MSG_STATUS_LOGIN_COOKIE_END);
 			}
 
 			// Note: this method here is called due to a bug in external lib: AShot
@@ -150,7 +131,7 @@ public class WebScraper {
 			/// Processing
 			ContentSaver.createDirectoryStructureFromBaseDir();
 						
-			if (makeDashboardScreenshots) {
+			if (saveDashboardScreenshot) {
 				simpleWait(3000);
 				ContentSaver.saveFullScreenScreenshot(driver, Constants.DEFAULT_OUTPUT_DIR_PATH, Constants.OUTPUT_FILE_NAME_DASHBOARD_SCREEN);
 			}
@@ -159,7 +140,7 @@ public class WebScraper {
 
 			}
 			
-			if (makeCoursesScreenshot) {
+			if (saveCoursesScreenshot) {
 				driver.navigate().to(defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_COURSES_URL));
 				simpleWait(3000);
 				ContentSaver.saveFullScreenScreenshot(driver, Constants.DEFAULT_OUTPUT_DIR_PATH, Constants.OUTPUT_FILE_NAME_COURSES_SCREEN);
@@ -170,7 +151,7 @@ public class WebScraper {
 			}
 
 			simpleWait(5500);
-			System.out.println(MSG_STATUS_PROCESSING);
+			System.out.println(Constants.MSG_STATUS_PROCESSING);
 			for (String url : urls.split(Constants.STRING_SEPARATOR)) {
 				// iterating over input URLs
 				
@@ -183,20 +164,20 @@ public class WebScraper {
 				WebElement courseTitleElement = driver.findElement(By.xpath(Constants.WEBSITE_CONTENT_COURSE_TITLE_XPATH));
 				String cleanedCourseTitleText = Utils.cleanString(courseTitleElement.getText());
 				File courseDirectory = ContentSaver.createDirectoryStructureFromBaseDir(cleanedCourseTitleText);
-				System.out.println(String.format(MSG_STATUS_NEW_DIRECTORY, courseDirectory.getAbsolutePath()));
+				System.out.println(String.format(Constants.MSG_STATUS_NEW_DIRECTORY, courseDirectory.getAbsolutePath()));
 				
 				if (saveCourseHtml) {
 					simpleWait(3000);
-					String htmlFileName = ContentSaver.getTimestampString() + Constants.FILE_NAME_PART_SEP + Utils.cleanString(url) + Constants.OUTPUT_FILE_EXTENSION_HTML;
+					String htmlFileName = Constants.OUTPUT_FILE_NAME_ZERO_PREFIX + Constants.FILE_NAME_PART_SEP + Utils.cleanString(url) + Constants.OUTPUT_FILE_EXTENSION_HTML_PSEUDO;
 					ContentSaver.writeTextFile(driver.getPageSource(), htmlFileName, courseDirectory);
-					System.out.println(String.format(MSG_STATUS_HTML_CREATED, htmlFileName));
+					System.out.println(String.format(Constants.MSG_STATUS_HTML_CREATED, htmlFileName));
 				}
 
 				simpleWait();
 				WebElement expandButton = driver.findElement(By.id(Constants.WEBSITE_CONTENT_EXPAND_BUTTON_ID));
 				expandButton.click();
 
-				if (makeCourseScreenshots) {
+				if (saveCourseScreenshots) {
 					simpleWait(3000);
 					ContentSaver.saveFullScreenScreenshot(driver, courseDirectory.getPath(), Constants.OUTPUT_FILE_NAME_COURSE_SCREEN);
 				}
@@ -204,43 +185,40 @@ public class WebScraper {
 				simpleWait();
 				expandButton.click();
 
-				if (downloadAttachedContents) {
+				if (saveAttachedContents) {
 					
-					System.out.println(MSG_STATUS_GET_ATTACHED);
+					System.out.println(Constants.MSG_STATUS_GET_ATTACHED);
 					simpleWait();
 					List<WebElement> sideContents = driver.findElements(By.xpath(Constants.WEBSITE_CONTENT_SIDE_CONTENT_XPATH));
 					
-					System.out.println(String.format(MSG_STATUS_ATTACHED_CNT, sideContents.size()));
+					System.out.println(String.format(Constants.MSG_STATUS_ATTACHED_CNT, sideContents.size()));
 					for (WebElement we : sideContents) {
 						
 						String sideElementUrl = we.getAttribute(Constants.WEBSITE_HREF);
 						String fileName = FilenameUtils.getName(new URL(sideElementUrl).getPath());
 						File newFile = new File(courseDirectory, fileName);
 						String filePath = newFile.getPath();
-						System.out.println(String.format(MSG_STATUS_DOWNLOADING, sideElementUrl, filePath));
+						System.out.println(String.format(Constants.MSG_STATUS_DOWNLOADING, sideElementUrl, filePath));
 						ContentSaver.downloadFileWithoutWaiting(sideElementUrl, newFile);
 						
 						simpleWait(1000, 3000);
 					}
 				}
 				
-				if ( makeTopicScreenshots || saveTopicHtml 
-					//  || makeArticleScreenshots || saveArticleHtml 
-						|| makeQuizScreenshots || saveQuizHtml 
-					//	|| makeVideoScreenshots || saveVideoHtml
-						|| downloadVideos || downloadTranscript) {
+				if ( saveTopicScreenshots || saveTopicHtml || saveVideos || saveTranscript) {
 
-					System.out.println(MSG_STATUS_PROCESS_ANCHOR);
+					System.out.println(Constants.MSG_STATUS_PROCESS_ANCHOR);
 					
 					simpleWait();
 					List<WebElement> anchors = driver.findElements(By.xpath(Constants.WEBSITE_CONTENT_MAIN_LINK_XPATH));
 					int anchorsCount = anchors.size();
-					System.out.println(String.format(MSG_STATUS_ANCHOR_CNT, anchorsCount));
+					System.out.println(String.format(Constants.MSG_STATUS_ANCHOR_CNT, anchorsCount));
 
 					for (int navigationCounter = 0; navigationCounter < anchorsCount; navigationCounter ++) {
 						// iterating over all anchors found on course page
 
-						String prefix = String.format(Constants.NUMBER_FORMAT, (navigationCounter + 1));
+						String formattedCounter = String.format(Constants.NUMBER_FORMAT, (navigationCounter + 1));
+						String prefix = formattedCounter + Constants.FILE_NAME_SEP;
 						
 						expandButton = driver.findElement(By.id(Constants.WEBSITE_CONTENT_EXPAND_BUTTON_ID));
 						expandButton.click();
@@ -262,32 +240,36 @@ public class WebScraper {
 						String nameLevel3 = Utils.cleanString(titleLevel3.getText());				
 
 						File targetDir = ContentSaver.createDirectoryStructureFromBaseDir(cleanedCourseTitleText, nameLevel1, nameLevel2);
-						System.out.println(titleLevel1.getText() + OUTPUT_SEP_1 + titleLevel2.getText() + OUTPUT_SEP_1 + we.getText() + OUTPUT_SEP_2 + link);
+						System.out.println(titleLevel1.getText() + Constants.OUTPUT_SEP_1 + titleLevel2.getText() + Constants.OUTPUT_SEP_1 + we.getText() + Constants.OUTPUT_SEP_2 + link);
 
 						simpleWait();
 						we.click();
 
-						simpleWait(3000, 5000);
+						simpleWait(5000, 8000);
 						String pageSource = driver.getPageSource();
 						
 						if (saveTopicHtml) {
-							ContentSaver.writeTextFile(pageSource, prefix + Constants.FILE_NAME_SEP + nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_HTML, courseDirectory);
+
+							String htmlFileName = nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_HTML_PSEUDO;
+							File htmlFile = ContentSaver.writeTextFile(pageSource, htmlFileName, targetDir);
+							Path linkPath = new File(courseDirectory, prefix + htmlFileName).toPath();
+							ContentSaver.createSymbolicLink(linkPath, htmlFile.toPath());
 						}
 
-						if (makeTopicScreenshots) {
+						if (saveTopicScreenshots) {
 
 							simpleWait(3000);
 							String pngFileName = nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_PNG;
 							File pngFile = ContentSaver.saveFullScreenScreenshot(driver, targetDir.getPath(), pngFileName);
-							Path linkPath = new File(courseDirectory, prefix + Constants.FILE_NAME_SEP + pngFileName).toPath();
+							Path linkPath = new File(courseDirectory, prefix + pngFileName).toPath();
 							ContentSaver.createSymbolicLink(linkPath, pngFile.toPath());
 						}
 						
 						boolean wasVideo = false;
-						if (downloadVideos) {							
+						if (saveVideos) {
 
 							try {
-								System.out.println(String.format(MSG_STATUS_CURRENT_URL, prefix, String.format(Constants.NUMBER_FORMAT, anchorsCount), driver.getCurrentUrl()));
+								System.out.println(String.format(Constants.MSG_STATUS_CURRENT_URL, formattedCounter, String.format(Constants.NUMBER_FORMAT, anchorsCount), driver.getCurrentUrl()));
 								WebElement videoField = driver.findElement(By.cssSelector(Constants.WEBSITE_CONTENT_VIDEO_URL_CLASS));
 								wasVideo = true;	// or NoSuchElementException happens
 								
@@ -300,50 +282,80 @@ public class WebScraper {
 									simpleWait(1000, 3000);
 									String mp4FileName = nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_MP4;								
 									File mp4File = ContentSaver.downloadFileWithWaiting(mp4Url, new File(targetDir, mp4FileName).getPath());
-									Path linkPath = new File(courseDirectory, prefix + Constants.FILE_NAME_SEP + mp4FileName).toPath();
+									Path linkPath = new File(courseDirectory, prefix + mp4FileName).toPath();
 									ContentSaver.createSymbolicLink(linkPath, mp4File.toPath());
 									
 								} else {
-									System.out.println(MSG_ERROR_NO_MP4_A);
+									System.out.println(Constants.MSG_ERROR_NO_MP4_A);
 								}
 							} catch (NoSuchElementException e) {
-								System.out.println(MSG_ERROR_NO_MP4_B);
+								System.out.println(Constants.MSG_ERROR_NO_MP4_B);
 							}
 						}
 
 						boolean wasTranscript = false;
-						if (downloadTranscript) {
+						if (saveTranscript) {
 
 							try {
-								
+
 								WebElement transcriptDiv = driver.findElement(By.cssSelector(Constants.WEBSITE_CONTENT_TRANSCRIPT_CLASS));
 								wasTranscript = true;	// or NoSuchElementException happens
 
 								List<WebElement> listOfSpanElements1 = transcriptDiv.findElements(By.xpath(Constants.WEBSITE_CONTENT_TRANSCRIPT_1_XPATH));
 								List<WebElement> listOfSpanElements2 = transcriptDiv.findElements(By.xpath(Constants.WEBSITE_CONTENT_TRANSCRIPT_2_XPATH));
-								
+
 								String transcriptString1 = listOfSpanElements1.stream().map(s -> s.getAttribute(Constants.WEBSITE_INNER_HTML)).collect(Collectors.joining(Constants.LINE_ENDING)) + Constants.LINE_ENDING;
 								String transcriptString2 = listOfSpanElements2.stream().map(s -> s.getText()).collect(Collectors.joining(Constants.LINE_ENDING)) + Constants.LINE_ENDING;
-								
-								ContentSaver.writeTextFile(transcriptString1, prefix + Constants.FILE_NAME_SEP + nameLevel3 + Constants.FILE_NAME_PART + Constants.FILE_NAME_EXTENSION, courseDirectory);
-								ContentSaver.writeTextFile(transcriptString2, prefix + Constants.FILE_NAME_SEP + nameLevel3 + Constants.FILE_NAME_EXTENSION, courseDirectory);
+
+								File transcriptTimed = ContentSaver.writeTextFile(transcriptString1, nameLevel3 + Constants.FILE_NAME_PART + Constants.FILE_NAME_EXTENSION, targetDir);
+								File transcriptClean = ContentSaver.writeTextFile(transcriptString2, nameLevel3 + Constants.FILE_NAME_EXTENSION, targetDir);
+
+								Path linkPathTimed = new File(courseDirectory, prefix + transcriptTimed.getName()).toPath();
+								Path linkPathClean = new File(courseDirectory, prefix + transcriptClean.getName()).toPath();
+
+								ContentSaver.createSymbolicLink(linkPathTimed, transcriptTimed.toPath());
+								ContentSaver.createSymbolicLink(linkPathClean, transcriptClean.toPath());
 								
 							} catch (NoSuchElementException e) {
-								System.out.println(MSG_ERROR_NO_SUB);
+								System.out.println(Constants.MSG_ERROR_NO_SUB);
 							}
 						}
 
-						boolean wasArticle = false;
-						boolean wasQuiz = false;
+						boolean notVideoNorSublitle = ((! wasVideo) || ( ! wasTranscript));
 
-						if ( (wasVideo && wasTranscript) || wasArticle || wasQuiz) {
+						boolean wasQuizOrArticle = false;
+						if ( saveQuizOrArticleHtml && notVideoNorSublitle ) {
+
+							try {
+
+								WebElement quizOrArticleDiv = driver.findElement(By.id(Constants.WEBSITE_CONTENT_SEQ_ID));
+								wasQuizOrArticle = true;
+
+								String quizOrArticleStr = quizOrArticleDiv.getAttribute(Constants.WEBSITE_OUTER_HTML).toString();
+								File htmlQuizOrArticle = ContentSaver.writeTextFile(quizOrArticleStr, nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_HTML, targetDir);
+
+								Path linkPathTimed = new File(courseDirectory, prefix + htmlQuizOrArticle.getName()).toPath();
+								ContentSaver.createSymbolicLink(linkPathTimed, htmlQuizOrArticle.toPath());
+
+							} catch (NoSuchElementException e) {
+								System.out.println(Constants.MSG_ERROR_NO_SUB);
+							}
+						}
+
+
+						if ( (wasVideo && wasTranscript) || wasQuizOrArticle) {
 							// Already known page types
 						} else if ( ((! wasVideo) && wasTranscript) || (wasVideo && (! wasTranscript)) ) {
 							// Error - Wrong video page
-							throw new RuntimeException(String.format(MSG_ERROR_WRONG_VIDEO_PAGE, url));
+							throw new RuntimeException(String.format(Constants.MSG_ERROR_WRONG_VIDEO_PAGE, url));
 						} else {
+
+							System.out.println("wasVideo         : " + wasVideo);
+							System.out.println("wasTranscript    : " + wasTranscript);
+							System.out.println("wasQuizOrArticle : " + wasQuizOrArticle);
+
 							// Error - Other unknown type of page
-							throw new RuntimeException(String.format(MSG_ERROR_UNKNOWN_PAGE_TYPE, url));
+							throw new RuntimeException(String.format(Constants.MSG_ERROR_UNKNOWN_PAGE_TYPE, url));
 						}
 
 						simpleWait();
@@ -354,13 +366,13 @@ public class WebScraper {
 				simpleWait();
 				
 				String navigateBackUrl = defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_COURSES_URL);
-				System.out.print(String.format(MSG_STATUS_NAVIGATE, navigateBackUrl));
+				System.out.print(String.format(Constants.MSG_STATUS_NAVIGATE, navigateBackUrl));
 				driver.navigate().to(navigateBackUrl);
 			}
 			
 			//driver.close();
 			
-			System.out.println(MSG_STATUS_EXITED);
+			System.out.println(Constants.MSG_STATUS_EXITED);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -373,7 +385,7 @@ public class WebScraper {
 		
 		String loginUrl = defaultConf.getValueByKey(Constants.CONFIGURATION_PROPERTY_LOGIN_URL);		
 		
-		System.out.println(String.format(MSG_STATUS_LOGIN_START, loginUrl));
+		System.out.println(String.format(Constants.MSG_STATUS_LOGIN_START, loginUrl));
 
 		driver.get(loginUrl);
 		
@@ -391,7 +403,7 @@ public class WebScraper {
 		simpleWait();
 		
 		submitButton.click();
-		System.out.println(MSG_STATUS_LOGIN_END);
+		System.out.println(Constants.MSG_STATUS_LOGIN_END);
 	}
 	
 	private void simpleWait(int min, int max) {
@@ -407,7 +419,7 @@ public class WebScraper {
 	private void simpleWait(int msec) {
 
 		try {
-			System.out.println(String.format(MSG_STATUS_WAITING, Integer.toString(msec)));
+			System.out.println(String.format(Constants.MSG_STATUS_WAITING, Integer.toString(msec)));
 			Thread.sleep(msec);
 			// TODO
 			//driver.manage().timeouts().implicitlyWait(msec, TimeUnit.MICROSECONDS);

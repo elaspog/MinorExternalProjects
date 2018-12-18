@@ -1,6 +1,10 @@
 
 public class Constants {
 
+    public static final int SECOND_IN_MILLISECONDS                        = 1000;
+    public static final int BYTE_CONVERSION_RATE                          = 1024;
+    public static final int MAX_PERCENT                                   = 100;
+
     public static final String DEFAULT_OUTPUT_DIR_PATH                    = "./_output";
     public static final String CONFIGURATION_FILE_PATH                    = "./configuration.properties";
     public static final String COOKIES_FILE_PATH                          = "./cookies.data";
@@ -14,33 +18,42 @@ public class Constants {
     public static final String STRING_SEPARATOR                           = ",";
     public static final String COOKIE_SEPARATOR                           = ";";
     public static final String NULL_STRING                                = "null";
+    public static final String URL_SPLITTER                               = "[\\\\/]";
+    public static final String HTTP_HEAD                                  = "HEAD";
 
+    public static final String OUTPUT_FILE_NAME_ZERO_PREFIX               = "00 - ";
     public static final String OUTPUT_FILE_NAME_LOGIN_SCREEN              = "loginscreen.png";
     public static final String OUTPUT_FILE_NAME_DASHBOARD_SCREEN          = "dashboard.png";
     public static final String OUTPUT_FILE_NAME_COURSES_SCREEN            = "courses.png";
     public static final String OUTPUT_FILE_NAME_COURSE_SCREEN             = "00 - course.png";
     public static final String OUTPUT_FILE_EXTENSION_MP4                  = ".mp4";
     public static final String OUTPUT_FILE_EXTENSION_PNG                  = ".png";
-    public static final String OUTPUT_FILE_EXTENSION_HTML                 = "_html";
+    public static final String OUTPUT_FILE_EXTENSION_HTML                 = ".html";
+    public static final String OUTPUT_FILE_EXTENSION_HTML_PSEUDO          = "_html";
+    public static final String OUTPUT_FILE_EXTENSION_PNG_TYPE             = "PNG";
 
     public static final String FILE_NAME_SEP                              = " - ";
     public static final String FILE_NAME_PART_SEP                         = "_";
     public static final String FILE_NAME_PART                             = ".timings";
     public static final String FILE_NAME_EXTENSION                        = ".txt";
 
-    public static final String CONFIG_SCRAPER_DOWNLOAD_ATTACHED_CONTENTS  = "scraper.downloadAttachedContents";
-    public static final String CONFIG_SCRAPER_DOWNLOAD_TRANSCRIPT         = "scraper.downloadTranscript";
-    public static final String CONFIG_SCRAPER_DOWNLOAD_VIDEO              = "scraper.downloadVideos";
-    public static final String CONFIG_SCRAPER_DASHBOARD_SCREENSHOT        = "scraper.makeDashboardScreenshots";
-    public static final String CONFIG_SCRAPER_COURSES_SCREENSHOT          = "scraper.makeCoursesScreenshots";
-    public static final String CONFIG_SCRAPER_COURSE_SCREENSHOT           = "scraper.makeCourseScreenshots";
-    public static final String CONFIG_SCRAPER_TOPIC_SCREENSHOT            = "scraper.makeTopicScreenshots";
-    public static final String CONFIG_SCRAPER_QUIZ_SCREENSHOT             = "scraper.makeQuizScreenshots";
+
     public static final String CONFIG_SCRAPER_DASHBOARD_HTML              = "scraper.saveDashboardHtml";
     public static final String CONFIG_SCRAPER_COURSES_HTML                = "scraper.saveCoursesHtml";
+
+    public static final String CONFIG_SCRAPER_DASHBOARD_SCREENSHOT        = "scraper.saveDashboardScreenshot";
+    public static final String CONFIG_SCRAPER_COURSES_SCREENSHOT          = "scraper.saveCoursesScreenshot";
+
     public static final String CONFIG_SCRAPER_COURSE_HTML                 = "scraper.saveCourseHtml";
+    public static final String CONFIG_SCRAPER_COURSE_SCREENSHOT           = "scraper.saveCourseScreenshots";
+    public static final String CONFIG_SCRAPER_DOWNLOAD_ATTACHED_CONTENTS  = "scraper.saveAttachedContents";
+
     public static final String CONFIG_SCRAPER_TOPIC_HTML                  = "scraper.saveTopicHtml";
-    public static final String CONFIG_SCRAPER_QUIZ_HTML                   = "scraper.saveQuizHtml";
+    public static final String CONFIG_SCRAPER_TOPIC_SCREENSHOT            = "scraper.saveTopicScreenshots";
+    public static final String CONFIG_SCRAPER_DOWNLOAD_VIDEO              = "scraper.saveVideos";
+    public static final String CONFIG_SCRAPER_DOWNLOAD_TRANSCRIPT         = "scraper.saveTranscript";
+    public static final String CONFIG_SCRAPER_QUIZ_OR_ARTICLE_HTML        = "scraper.saveQuizOrArticleHtml";
+
 
     public static final String CONFIGURATION_PROPERTY_USERNAME            = "username";
     public static final String CONFIGURATION_PROPERTY_PASSWORD            = "password";
@@ -70,11 +83,36 @@ public class Constants {
     public static final String WEBSITE_CONTENT_MAIN_SUBCONTENT_XPATH      = ".//div/div";
     public static final String WEBSITE_CONTENT_MAIN_UPPER_TITLE_SUB_XPATH = ".//parent::*/parent::*/parent::*/button/h4";
     public static final String WEBSITE_CONTENT_MAIN_UPPER_TITLE_TOP_XPATH = ".//parent::*/parent::*/parent::*/parent::*/parent::*/button/h3";
+    public static final String WEBSITE_CONTENT_SEQ_ID                     = "seq_content";
     public static final String WEBSITE_SHORTEST_MATCHING_MP4_URL          = ".*(https.*\\.mp4\\?.*?)&";
     public static final String WEBSITE_INNER_HTML                         = "innerHTML";
+    public static final String WEBSITE_OUTER_HTML                         = "outerHTML";
     public static final String WEBSITE_HREF                               = "href";
 
-    public static final int SECOND_IN_MILLISECONDS                        = 1000;
-    public static final int BYTE_CONVERSION_RATE                          = 1024;
-    public static final int MAX_PERCENT                                   = 100;
+    public static final String MSG_STATUS_NEW_DIRECTORY                   = "Directory created: '%s'";
+    public static final String MSG_STATUS_HTML_CREATED                    = "HTML file created: '%s'";
+    public static final String MSG_STATUS_LOGIN_COOKIE_BEGIN              = "Logging in and generating new cookies for webdriver.";
+    public static final String MSG_STATUS_LOGIN_COOKIE_END                = "New cookies for webdriver were saved.";
+    public static final String MSG_STATUS_PROCESSING                      = "\nProcessing...";
+    public static final String MSG_STATUS_DOWNLOADING                     = "Downloading: '%s' into '%s'";
+    public static final String MSG_STATUS_ATTACHED_CNT                    = "Attached content count: %s";
+    public static final String MSG_STATUS_ANCHOR_CNT                      = "Anchor count: '%s'";
+    public static final String MSG_STATUS_GET_ATTACHED                    = "Getting attached contents";
+    public static final String MSG_STATUS_PROCESS_ANCHOR                  = "Getting contents of main anchors";
+    public static final String MSG_STATUS_NAVIGATE                        = "Navigate back to: '%s'";
+    public static final String MSG_STATUS_LOGIN_END                       = "Login is done.";
+    public static final String MSG_STATUS_LOGIN_START                     = "Doing login: '%s'";
+    public static final String MSG_STATUS_WAITING                         = "Waiting: %s msec";
+    public static final String MSG_STATUS_EXITED                          = "Exited.";
+    public static final String MSG_STATUS_CURRENT_URL                     = "[ %s / %s ] Current url: '%s'";
+    public static final String MSG_ERROR_NO_MP4_A                         = "No MP4 URL found.";
+    public static final String MSG_ERROR_NO_MP4_B                         = "Not an MP4 page.";
+    public static final String MSG_ERROR_NO_SUB                           = "No Transcript URL.";
+    public static final String MSG_ERROR_NO_COOKIE                        = "There is no cookie in the file:\n'%s'";
+    public static final String MSG_ERROR_COOKIE_LOGIN                     = "Cookies were not present in files.";
+    public static final String MSG_ERROR_UNKNOWN_PAGE_TYPE                = "Unknown type of page: '%s'";
+    public static final String MSG_ERROR_WRONG_VIDEO_PAGE                 = "Wrong video type page: '%s'";
+    public static final String OUTPUT_SEP_1                               = " /// ";
+    public static final String OUTPUT_SEP_2                               = " ::: ";
+
 }

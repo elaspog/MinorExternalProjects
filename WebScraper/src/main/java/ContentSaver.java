@@ -76,7 +76,7 @@ public class ContentSaver {
         return new SimpleDateFormat(Constants.DATE_FORMAT).format(Calendar.getInstance().getTime());
     }
     
-    public static void writeTextFile(String textContent, String filename, File dirPath) 
+    public static File writeTextFile(String textContent, String filename, File dirPath)
     		throws IOException {
     	
         File logFile = new File(dirPath, filename);
@@ -88,6 +88,7 @@ public class ContentSaver {
         } catch (IOException e) {
             throw new IOException("Error while writing file: " + filename);
         }
+        return logFile;
     }
     
     public static String getFileNameFromUrl(String url) 
@@ -100,7 +101,7 @@ public class ContentSaver {
     		throws MalformedURLException {
 		
 		String fileName = null;
-		String[] pathContents = url.getPath().split("[\\\\/]");
+		String[] pathContents = url.getPath().split(Constants.URL_SPLITTER);
 		if(pathContents != null){
 			fileName = pathContents[pathContents.length-1];
 		}
@@ -161,7 +162,7 @@ public class ContentSaver {
 		HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("HEAD");
+            conn.setRequestMethod(Constants.HTTP_HEAD);
             conn.getInputStream();
             return conn.getContentLength() / Constants.BYTE_CONVERSION_RATE;
         } catch (IOException e) {
@@ -174,7 +175,7 @@ public class ContentSaver {
 	public static void downloadFileWithoutWaiting(String url, File outputFile) 
 			throws IOException {
 		
-		System.out.println("filePath: " + outputFile.getPath());
+		System.out.println("FilePath: " + outputFile.getPath());
 		
 		URL website = new URL(url);;
 		ReadableByteChannel rbc;
@@ -202,7 +203,7 @@ public class ContentSaver {
 		Screenshot fpScreenshot = new AShot()
 				.shootingStrategy(ShootingStrategies.viewportPasting(1000))
 				.takeScreenshot(driver);
-		ImageIO.write(fpScreenshot.getImage(), "PNG", screenshot);
+		ImageIO.write(fpScreenshot.getImage(), Constants.OUTPUT_FILE_EXTENSION_PNG_TYPE, screenshot);
 		
 		return screenshot;
 	}
