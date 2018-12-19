@@ -75,5 +75,19 @@ public class PropertyFileConfiguration {
 			return defaultValue;
 		}
 	}
+
+	protected int getIntegerValueByKey(String key) {
+
+		return Integer.parseInt(properties.getProperty(key));
+	}
+
+	protected int getIntegerValueByKey(String key, int defaultValue) {
+
+		try {
+			return Integer.parseInt(properties.getProperty(key));
+		} catch (Exception e) {
+			return defaultValue;
+		}
+	}
 	
 }

@@ -25,7 +25,7 @@ public class Constants {
     public static final String OUTPUT_FILE_NAME_LOGIN_SCREEN              = "loginscreen.png";
     public static final String OUTPUT_FILE_NAME_DASHBOARD_SCREEN          = "dashboard.png";
     public static final String OUTPUT_FILE_NAME_COURSES_SCREEN            = "courses.png";
-    public static final String OUTPUT_FILE_NAME_COURSE_SCREEN             = "00 - course.png";
+    public static final String OUTPUT_FILE_NAME_COURSE_SCREEN             = "course.png";
     public static final String OUTPUT_FILE_EXTENSION_MP4                  = ".mp4";
     public static final String OUTPUT_FILE_EXTENSION_PNG                  = ".png";
     public static final String OUTPUT_FILE_EXTENSION_HTML                 = ".html";
@@ -37,6 +37,8 @@ public class Constants {
     public static final String FILE_NAME_PART                             = ".timings";
     public static final String FILE_NAME_EXTENSION                        = ".txt";
 
+    public static final String CONFIG_DEBUG_FILTER_ANCHOR_ARRAY_IND_START = "debug.anchorStart";
+    public static final String CONFIG_DEBUG_FILTER_ANCHOR_ARRAY_IND_END   = "debug.anchorEnd";
 
     public static final String CONFIG_SCRAPER_DASHBOARD_HTML              = "scraper.saveDashboardHtml";
     public static final String CONFIG_SCRAPER_COURSES_HTML                = "scraper.saveCoursesHtml";
@@ -72,7 +74,7 @@ public class Constants {
     public static final String WEBSITE_LOGIN_REMEMBER_CHECKBOX_ID         = "login-remember";
     public static final String WEBSITE_LOGIN_SUBMIT_BUTTON_XPATH          = "/html/body/div[2]/div[2]/div/main/div/div/section[1]/div/form/button";
     public static final String WEBSITE_CONTENT_EXPAND_BUTTON_ID           = "expand-collapse-outline-all-button";
-    public static final String WEBSITE_CONTENT_VIDEO_URL_CLASS            = "div[class='video is-captions-rendered is-initialized']";
+    public static final String WEBSITE_CONTENT_VIDEO_URL_CLASS            = "div.video";
     public static final String WEBSITE_CONTENT_TRANSCRIPT_CLASS           = "div[class='subtitles']";
     public static final String WEBSITE_CONTENT_TRANSCRIPT_1_XPATH         = ".//ol/li[span]";
     public static final String WEBSITE_CONTENT_TRANSCRIPT_2_XPATH         = ".//ol/li/span";
@@ -105,9 +107,10 @@ public class Constants {
     public static final String MSG_STATUS_WAITING                         = "Waiting: %s msec";
     public static final String MSG_STATUS_EXITED                          = "Exited.";
     public static final String MSG_STATUS_CURRENT_URL                     = "[ %s / %s ] Current url: '%s'";
-    public static final String MSG_ERROR_NO_MP4_A                         = "No MP4 URL found.";
-    public static final String MSG_ERROR_NO_MP4_B                         = "Not an MP4 page.";
-    public static final String MSG_ERROR_NO_SUB                           = "No Transcript URL.";
+    public static final String MSG_ERROR_NO_MP4_TYPE_1                    = "No MP4 URL found.";
+    public static final String MSG_ERROR_NO_MP4_TYPE_2                    = "No Video was found.";
+    public static final String MSG_ERROR_NO_SUB                           = "No Transcript was found.";
+    public static final String MSG_ERROR_NO_QUIZ_OR_ARTICLE               = "No Quiz or Article was foud.";
     public static final String MSG_ERROR_NO_COOKIE                        = "There is no cookie in the file:\n'%s'";
     public static final String MSG_ERROR_COOKIE_LOGIN                     = "Cookies were not present in files.";
     public static final String MSG_ERROR_UNKNOWN_PAGE_TYPE                = "Unknown type of page: '%s'";

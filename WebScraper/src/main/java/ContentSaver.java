@@ -53,22 +53,22 @@ public class ContentSaver {
 		return targetDir;
 	}
 
-    public static void createSymbolicLink(Path linkPath, Path targetPath) 
+    public static Path createSymbolicLink(Path linkPath, Path targetPath)
     		throws IOException {
     	
         if (Files.exists(linkPath)) {
             Files.delete(linkPath);
         }
-        Files.createSymbolicLink(linkPath, targetPath);
+        return Files.createSymbolicLink(linkPath, targetPath);
     }
 
-    public static void createHardLink(Path linkPath, Path targetPath) 
+    public static Path createHardLink(Path linkPath, Path targetPath)
     		throws IOException {
     	
         if (Files.exists(linkPath)) {
             Files.delete(linkPath);
         }
-        Files.createLink(linkPath, targetPath);
+        return Files.createLink(linkPath, targetPath);
     }
     
     public static String getTimestampString() {
@@ -145,7 +145,6 @@ public class ContentSaver {
 					}
 				}
 		    }
-			System.out.println("Downloaded: " + fileLocationToSave);
 			byte[] response = byteArrayOutputStream.toByteArray();
 			fos.write(response);
 		}		
