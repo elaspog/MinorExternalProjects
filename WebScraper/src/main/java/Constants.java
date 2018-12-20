@@ -85,6 +85,8 @@ public class Constants {
     public static final String WEBSITE_CONTENT_MAIN_SUBCONTENT_XPATH      = ".//div/div";
     public static final String WEBSITE_CONTENT_MAIN_UPPER_TITLE_SUB_XPATH = ".//parent::*/parent::*/parent::*/button/h4";
     public static final String WEBSITE_CONTENT_MAIN_UPPER_TITLE_TOP_XPATH = ".//parent::*/parent::*/parent::*/parent::*/parent::*/button/h3";
+    public static final String WEBSITE_CONTENT_LEVEL_1_SIBLINGS_XPATH     = "./parent::*/parent::*/parent::*/parent::*/parent::*/preceding-sibling::li";
+    public static final String WEBSITE_CONTENT_LEVEL_2_SIBLINGS_XPATH     = "./parent::*/parent::*/parent::*/preceding-sibling::li";
     public static final String WEBSITE_CONTENT_SEQ_ID                     = "seq_content";
     public static final String WEBSITE_SHORTEST_MATCHING_MP4_URL          = ".*(https.*\\.mp4\\?.*?)&";
     public static final String WEBSITE_INNER_HTML                         = "innerHTML";
@@ -108,7 +110,8 @@ public class Constants {
     public static final String MSG_STATUS_EXITED                          = "Exited.";
     public static final String MSG_STATUS_CURRENT_URL                     = "[ %s / %s ] Current url: '%s'";
     public static final String MSG_ERROR_NO_MP4_TYPE_1                    = "No MP4 URL found.";
-    public static final String MSG_ERROR_NO_MP4_TYPE_2                    = "No Video was found.";
+    public static final String MSG_ERROR_NO_MP4_TYPE_2                    = "No div element with video content.";
+    public static final String MSG_ERROR_NO_MP4_TYPE_3                    = "No Video was found.";
     public static final String MSG_ERROR_NO_SUB                           = "No Transcript was found.";
     public static final String MSG_ERROR_NO_QUIZ_OR_ARTICLE               = "No Quiz or Article was foud.";
     public static final String MSG_ERROR_NO_COOKIE                        = "There is no cookie in the file:\n'%s'";

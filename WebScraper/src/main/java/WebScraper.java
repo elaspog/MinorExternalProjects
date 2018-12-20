@@ -2,9 +2,6 @@
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -246,19 +243,25 @@ public class WebScraper {
 						
 						// getting the elements of the page again after possible navigation
 						anchors = driver.findElements(By.xpath(Constants.WEBSITE_CONTENT_MAIN_LINK_XPATH));
-						
+
 						WebElement we = anchors.get(navigationCounter);
-						
+
 						WebElement titleLevel1 = we.findElement(By.xpath(Constants.WEBSITE_CONTENT_MAIN_UPPER_TITLE_TOP_XPATH));
 						WebElement titleLevel2 = we.findElement(By.xpath(Constants.WEBSITE_CONTENT_MAIN_UPPER_TITLE_SUB_XPATH));
 						WebElement titleLevel3 = we.findElement(By.xpath(Constants.WEBSITE_CONTENT_MAIN_SUBCONTENT_XPATH));
+
+						List<WebElement> preceedingSiblingsLevel1 = we.findElements(By.xpath(Constants.WEBSITE_CONTENT_LEVEL_1_SIBLINGS_XPATH));
+						List<WebElement> preceedingSiblingsLevel2 = we.findElements(By.xpath(Constants.WEBSITE_CONTENT_LEVEL_2_SIBLINGS_XPATH));
+
+						String level1DirPrefix = String.format(Constants.NUMBER_FORMAT, preceedingSiblingsLevel1.size() + 1);
+						String level2DirPrefix = String.format(Constants.NUMBER_FORMAT, preceedingSiblingsLevel2.size() + 1);
 
 						String link = we.getAttribute(Constants.WEBSITE_HREF);
 						String nameLevel1 = Utils.cleanString(titleLevel1.getText());
 						String nameLevel2 = Utils.cleanString(titleLevel2.getText());
 						String nameLevel3 = Utils.cleanString(titleLevel3.getText());				
 
-						File targetDir = ContentSaver.createDirectoryStructureFromBaseDir(cleanedCourseTitleText, nameLevel1, nameLevel2);
+						File targetDir = ContentSaver.createDirectoryStructureFromBaseDir(cleanedCourseTitleText, level1DirPrefix + Constants.FILE_NAME_SEP + nameLevel1, level2DirPrefix + Constants.FILE_NAME_SEP + nameLevel2);
 						System.out.println(titleLevel1.getText() + Constants.OUTPUT_SEP_1 + titleLevel2.getText() + Constants.OUTPUT_SEP_1 + we.getText() + Constants.OUTPUT_SEP_2 + link);
 
 						simpleWait();
@@ -288,19 +291,24 @@ public class WebScraper {
 						boolean wasVideo = false;
 						if (saveVideos) {
 
-							try {
+							videoProcessing: try {
 								List<WebElement> videoFields = driver.findElements(By.cssSelector(Constants.WEBSITE_CONTENT_VIDEO_URL_CLASS));
+
 								if (videoFields.size() > 1)
 									throw new RuntimeException("Multiple video fields are not expected.");
 
-								wasVideo = true;	// or NoSuchElementException happens
+								if (videoFields.size() == 0) {
+									System.out.println(Constants.MSG_ERROR_NO_MP4_TYPE_2);
+									break videoProcessing;
+								}
 								
 								String videoDiv = videoFields.get(0).getAttribute(Constants.WEBSITE_ATTRIBUTE_INNER_HTML);
 								//ContentSaver.writeTextFile(videoDiv, prefix + NAME_SEP + nameLevel3 + ".txt", courseDirectory);
 								String mp4Url = getMp4UrlFromPageSource(videoDiv);
 								
 								if (mp4Url != null) {
-									
+
+									wasVideo = true;	// URL was found and NoSuchElementException has happened
 									simpleWait(1000, 3000);
 									String mp4FileName = prefix + nameLevel3 + Constants.OUTPUT_FILE_EXTENSION_MP4;
 									File mp4File = ContentSaver.downloadFileWithWaiting(mp4Url, new File(targetDir, mp4FileName).getPath());
@@ -312,7 +320,7 @@ public class WebScraper {
 									System.out.println(Constants.MSG_ERROR_NO_MP4_TYPE_1);
 								}
 							} catch (NoSuchElementException e) {
-								System.out.println(Constants.MSG_ERROR_NO_MP4_TYPE_2);
+								System.out.println(Constants.MSG_ERROR_NO_MP4_TYPE_3);
 							}
 						}
 
@@ -467,21 +475,22 @@ public class WebScraper {
 	
 	private void clickWebElementWithWaitAndRetry(WebElement we, int waitingTime, int maxRetryCount) {
 
-		String previousUrl = driver.getCurrentUrl();
+		String prevUrl = driver.getCurrentUrl();
 		we.click();
-		String currentUrl = null;
+		String currUrl = null;
 		int counter = 0;
 		do {
 			if (counter >= maxRetryCount) {
-				throw new RuntimeException("Retry count reached while trying to navigate.");
+				we.click();
+				//throw new RuntimeException("Retry count reached while trying to navigate.");
 			}
 			simpleWait(waitingTime);
 			if (counter >= 1) {
-				System.out.println(String.format("Checking again after %s ms.\npreviousUrl=%s\ncurrentUrl=%s", counter * waitingTime));
+				System.out.println(String.format("Checking again after %s ms.\nprevUrl=%s\ncurrUrl=%s", counter * waitingTime, prevUrl, currUrl));
 			}
-			currentUrl = driver.getCurrentUrl();
+			currUrl = driver.getCurrentUrl();
 			counter++;
-		} while (previousUrl.equals(currentUrl));
+		} while (prevUrl.equals(currUrl));
 	}
 
 }
